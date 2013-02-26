@@ -1,0 +1,22 @@
+body {
+	margin: auto;
+	font-size: 110%;
+	width: 80%;
+}
+/* The header at the top of the page. */
+#head {
+
+}
+/* The meat of your page. */
+#cont {
+
+}
+/* The metadata at the bottom of the post. */
+#meta {
+	color: gray;
+	font-size: 60%;
+}
+/* The footer at the bottom of the page. */
+#foot {
+
+}
