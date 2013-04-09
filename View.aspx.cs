@@ -9,6 +9,7 @@ namespace SimpleBlog {
 	public partial class View : Page {
 		protected void Page_Load(object sender, EventArgs e) {
 			Title += (" - " + Request.QueryString["p"]);
+			GetPost(Request.QueryString["p"]);
 		}
 		
 		// Get posts in posts dir
@@ -16,10 +17,13 @@ namespace SimpleBlog {
 			Markdown md = new Markdown();
 			var postFileName = "posts/" + post;
 			
-			Response.Write("<h2>" + post + "</h2>");
-			Response.Write(md.Transform(File.ReadAllText(postFileName)));
+			PostHeader.Text = post;
 			
-			Response.Write("<p id='meta'>posted on " + File.GetCreationTime(postFileName).ToString() + ", updated on " + File.GetLastWriteTime(postFileName).ToString() + "</p>");
+			PostContent.Text =md.Transform(File.ReadAllText(postFileName));
+			
+			PostDate.Text= File.GetLastWriteTime(postFileName).ToString();
+			
+			PostSource.NavigateUrl = postFileName;
 		}
 	}
 }
