@@ -17,7 +17,7 @@ namespace SimpleBlog {
 			var files = di.GetFiles().OrderByDescending(f =>
 				f.LastWriteTime).ToList();
 			foreach (var fi in files) {
-				var n = Path.GetFileNameWithoutExtension(fi.Name);
+				var n = fi.Name;
 				Response.Write("<li><a href='View.aspx?p=" + n + "'>" + n + "</a> - " + fi.LastWriteTime.ToString() + "</li>");
 			}
 		}

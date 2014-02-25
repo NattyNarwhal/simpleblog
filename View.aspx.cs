@@ -15,11 +15,11 @@ namespace SimpleBlog {
 		// Get posts in posts dir
 		public void GetPost(string post) {
 			Markdown md = new Markdown();
-			var postFileName = "posts/" + post;
+			var postFileName = Path.Combine("posts", post);
 			
 			PostHeader.Text = post;
 			
-			PostContent.Text =md.Transform(File.ReadAllText(postFileName));
+			PostContent.Text = md.Transform(File.ReadAllText(postFileName));
 			
 			PostDate.Text= File.GetLastWriteTime(postFileName).ToString();
 			
