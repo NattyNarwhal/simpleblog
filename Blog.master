@@ -6,6 +6,7 @@
 		<title>Blog</title>
 		<asp:ContentPlaceHolder id="head" runat="server">
 		</asp:ContentPlaceHolder>
+		<link href="Feed.ashx" type="application/atom+xml" rel="alternate" title="Blog feed" />
 		<link href="Style.css" rel="stylesheet" type="text/css" />
 	</head>
 	<body>
