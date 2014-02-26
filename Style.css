@@ -11,6 +11,11 @@ body {
 #cont {
 
 }
+/* The source code of the post, if displayed. */
+#cont #rawMarkdown {
+	background-color: #EEE;p
+	padding: 1em;
+}
 /* The metadata at the bottom of the post. */
 #meta {
 	color: gray;

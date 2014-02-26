@@ -21,12 +21,17 @@ namespace SimpleBlog {
 			postFileName = postFileName.Replace("../", String.Empty);
 
 			PostHeader.Text = post;
+			if (Request.QueryString.Get("raw") == null)
+			{
+				PostContent.Text = md.Transform(File.ReadAllText(postFileName));
+				PostSource.NavigateUrl = Request.Url.ToString() + "&raw=true";
+			}
+			else {
+				// wrap in <pre>
+				PostContent.Text = "<pre id='rawMarkdown'>\n" + HttpUtility.HtmlEncode(File.ReadAllText(postFileName)) + "\n</pre>";
+			}
 			
-			PostContent.Text = md.Transform(File.ReadAllText(postFileName));
-			
-			PostDate.Text= File.GetLastWriteTime(postFileName).ToString();
-			
-			PostSource.NavigateUrl = postFileName;
+			PostDate.Text = File.GetLastWriteTime(postFileName).ToString();
 		}
 	}
 }
