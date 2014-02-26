@@ -3,7 +3,7 @@
 <!-- Feel free to tweak this layout, but ultimately keep the placeholders. -->
 <html>
 	<head runat="server">
-		<title>Blog</title>
+		<title><%=System.Web.Configuration.WebConfigurationManager.AppSettings["BlogTitle"] %></title>
 		<asp:ContentPlaceHolder id="head" runat="server">
 		</asp:ContentPlaceHolder>
 		<link href="Feed.ashx" type="application/atom+xml" rel="alternate" title="Blog feed" />
@@ -11,7 +11,7 @@
 	</head>
 	<body>
 		<div id="head">
-			<h1>blog</h1>
+			<h1><%=System.Web.Configuration.WebConfigurationManager.AppSettings["BlogTitle"] %></h1>
 			<a href="Default.aspx">index</a>
 		</div>
 		<div id="cont">

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
+using System.Web.Configuration;
 
 namespace SimpleBlog {
 	public partial class Blog : Page {
@@ -13,7 +14,7 @@ namespace SimpleBlog {
 		// Get posts in posts dir
 		public void GetPosts() {
 			// TODO: grouped version, alternate modes, shit like that
-			var di = new DirectoryInfo("posts");
+			var di = new DirectoryInfo(WebConfigurationManager.AppSettings["PostsDirectory"]);
 			var files = di.GetFiles().OrderByDescending(f =>
 				f.LastWriteTime).ToList();
 			foreach (var fi in files) {

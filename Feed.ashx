@@ -3,6 +3,7 @@
 using System;
 using System.IO;
 using System.Web;
+using System.Web.Configuration;
 using System.Xml;
 using System.Linq;
 
@@ -10,23 +11,18 @@ namespace SimpleBlog {
 	public class Feed : IHttpHandler {
 		// the Atom XMLNS (do not change)
 		const string xmlns = "http://www.w3.org/2005/Atom";
-		// your website's metadata
-		const string title = "My blog";
-		// how many posts
-		const int max_posts = 15;
-		// the URL & the posts prefix of the site, ending in / - the feed will also link back to this
-		const string site = "http://www.example.com/blog/";
-		const string site_prefix = site + "posts/";
-		// the posts directory
-		const string posts_dir = "/home/calvin/src/simpleblog/posts";
 
 		public void ProcessRequest (HttpContext context) {
 			context.Response.ContentType = "application/atom+xml";
+			// The blog (we get this with some clever tricks?)
+			var site = (context.Request.Url.GetLeftPart(UriPartial.Authority) + VirtualPathUtility.ToAbsolute("~/")).ToString();
+			// The prefix, which is just site + thing
+			var prefix = site + "View.aspx?p=";
 
 			// get the posts
-			var di = new DirectoryInfo(posts_dir);
+			var di = new DirectoryInfo(WebConfigurationManager.AppSettings["PostsDirectory"]);
 			var files = di.GetFiles().OrderByDescending(f => f.LastWriteTime)
-				.Take(max_posts).ToList();
+				.Take(Convert.ToInt32(WebConfigurationManager.AppSettings["MaxFeedPosts"])).ToList();
 
 			// create RSS boilerplate (is there a better way?)
 			var xd = new XmlDocument();
@@ -34,25 +30,27 @@ namespace SimpleBlog {
 			var atomRoot = xd.CreateElement("feed", xmlns); // <feed>
 
 			var atomTitle = xd.CreateElement("title", xmlns); // <title>
-			atomTitle.InnerText = title;
+			atomTitle.InnerText = WebConfigurationManager.AppSettings["BlogTitle"];
 			atomRoot.AppendChild(atomTitle);
 
+			var atomSelfLink = xd.CreateElement("link", xmlns); // <link href= rel=self>
+			atomSelfLink.SetAttribute("href", context.Request.Url.ToString());
+			atomSelfLink.SetAttribute("rel", "self");
+			atomRoot.AppendChild(atomSelfLink);
+
 			var atomBlogLink = xd.CreateElement("link", xmlns); // <link href=>
-			//var atomBlogLinkHref = xd.CreateAttribute("href", xmlns);
-			//atomBlogLinkHref.Value = site;
-			//atomBlogLink.Attributes.SetNamedItem(atomBlogLinkHref);
 			atomBlogLink.SetAttribute("href", site);
 			atomRoot.AppendChild(atomBlogLink);
 
 			var atomId = xd.CreateElement("id", xmlns); // <id>
-			atomId.InnerText = site_prefix; // is this valid?
+			atomId.InnerText = site; // is this valid?
 			atomRoot.AppendChild(atomId);
 
 			// iter the array
 			foreach (var fi in files) {
 				var name = fi.Name;
 				var updated = fi.LastWriteTime.ToString("s") + "Z"; // TERRIBLE UGLY HACK FOR ATOM DATES
-				var link = site_prefix + name;
+				var link = prefix + name;
 				// make the nodes
 				var atomEntry = xd.CreateElement("entry", xmlns); // <entry>
 
@@ -70,9 +68,6 @@ namespace SimpleBlog {
 				atomEntry.AppendChild(atomPostUpdated);
 
 				var atomPostLink = xd.CreateElement("link", xmlns); // <link href=>
-				//var atomPostLinkHref = xd.CreateAttribute("href", xmlns);
-				//atomPostLinkHref.Value = link;
-				//atomPostLink.Attributes.SetNamedItem(atomPostLinkHref);
 				atomPostLink.SetAttribute("href", link);
 				atomEntry.AppendChild(atomPostLink);
 
